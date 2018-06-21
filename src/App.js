@@ -9,37 +9,34 @@ let SignInForm = props => {
     <form className="form" onSubmit={handleSubmit}>
       <div className="field">
         <div className="control">
-          <label className="label">First Name</label>
           <Field
             className="input"
             name="firstName"
-            component="input"
+            component={renderField}
             type="text"
-            placeholder="First Name"
+            label="First Name"
           />
         </div>
       </div>
       <div className="field">
         <div className="control">
-          <label className="label">Last Name</label>
           <Field
             className="input"
             name="lastName"
-            component="input"
+            component={renderField}
             type="text"
-            placeholder="Last Name"
+            label="Last Name"
           />
         </div>
       </div>
       <div className="field">
         <div className="control">
-          <label className="label">Email</label>
           <Field
             className="input"
             name="email"
-            component="input"
+            component={renderField}
             type="email"
-            placeholder="Email Address"
+            label="Email"
           />
         </div>
       </div>
@@ -62,9 +59,9 @@ let SignInForm = props => {
           <Field
             className="input"
             name="age"
-            component="input"
+            component={renderField}
             type="number"
-            placeholder="Age"
+            label="Age"
           />
         </div>
       </div>
@@ -114,9 +111,51 @@ let SignInForm = props => {
     </form>
   );
 };
+const validate = val => {
+  const errors = {};
+  if (!val.firstName) {
+    console.log('First Name is required!');
+    errors.firstName = 'Required';
+  }
+  if (!val.lastName) {
+    console.log('Last Name is required!');
+    errors.lastName = 'Required';
+  }
+  if (!val.email) {
+    console.log('Email is required!');
+    errors.email = 'Required';
+  } else if (!/^.+@.+$/i.test(val.email)) {
+    errors.email = 'Invalid email address';
+  }
+  if (!val.age) {
+    errors.age = 'Required';
+  } else if (isNaN(Number(val.age))) {
+    errors.age = 'Must be a number';
+  } else if (Number(val.age) < 18) {
+    errors.age = 'Sorry, you must be at least 18 years old';
+  }
+  return errors;
+};
 SignInForm = reduxForm({
-  form: 'signIn'
+  form: 'signIn',
+  validate
 })(SignInForm);
+const renderField = ({
+  input,
+  label,
+  type,
+  meta: { touched, error, warning }
+}) => (
+  <div>
+    <div className="control">
+      <label className="field">{label}</label>
+      <input className="input" {...input} placeholder={label} type={type} />
+      {touched &&
+        ((error && <span>{error}</span>) ||
+          (warning && <span>{warning}</span>))}
+    </div>
+  </div>
+);
 class App extends Component {
   handleSignIn = values => {
     console.log(values);
