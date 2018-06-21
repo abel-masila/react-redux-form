@@ -136,10 +136,6 @@ const validate = val => {
   }
   return errors;
 };
-SignInForm = reduxForm({
-  form: 'signIn',
-  validate
-})(SignInForm);
 const renderField = ({
   input,
   label,
@@ -151,11 +147,16 @@ const renderField = ({
       <label className="field">{label}</label>
       <input className="input" {...input} placeholder={label} type={type} />
       {touched &&
-        ((error && <span>{error}</span>) ||
+        ((error && <span className="help is-danger">{error}</span>) ||
           (warning && <span>{warning}</span>))}
     </div>
   </div>
 );
+SignInForm = reduxForm({
+  form: 'signIn',
+  validate
+})(SignInForm);
+
 class App extends Component {
   handleSignIn = values => {
     console.log(values);
